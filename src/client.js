@@ -61,6 +61,7 @@ window.electronAPI.onChatLoaded((event, data) => {
   }
   document.getElementById('initial-view').style.display = 'none'
   document.getElementById('chat-view').style.display = 'block'
+  userInput.focus()
 })
 
 // document.getElementById("goBack").addEventListener("click", function () {
