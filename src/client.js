@@ -1,9 +1,7 @@
-//* This script handles interaction with the user interface, as well as communication
-//* between the renderer thread (UI) and the worker thread (processing).
-
 const userInput = document.getElementById('user-input-text')
 const historyContainer = document.getElementById('history')
-const openFileButton = document.getElementById('openFileBtn')
+const openFileButton = document.getElementById('file-open')
+const openFileErrMsg = document.getElementById('file-open-err-msg')
 
 userInput.addEventListener('keydown', function (event) {
   if (event.key === 'Enter') {
@@ -51,10 +49,22 @@ window.electronAPI.onChatReply((event, data) => {
 })
 
 openFileButton.addEventListener('click', () => {
+  openFileErrMsg.innerText = ''
   window.electronAPI.newChat()
+  //* Hide the initial view and show the chat view
 })
 
 window.electronAPI.onChatLoaded((event, data) => {
-  //* this callback receives file data in the renderer process
-  console.log('Chat loaded:', data)
+  if (!data.success) {
+    openFileErrMsg.innerText = data.content
+    return
+  }
+  document.getElementById('initial-view').style.display = 'none'
+  document.getElementById('chat-view').style.display = 'block'
 })
+
+// document.getElementById("goBack").addEventListener("click", function () {
+//   // Hide the chat view and show the initial view
+//   document.getElementById("chat-view").style.display = "none";
+//   document.getElementById("initial-view").style.display = "block";
+// });
