@@ -1,7 +1,12 @@
+//* This script handles interaction with the user interface, as well as communication
+//* between the renderer thread (UI) and the worker thread (processing).
+
 const userInput = document.getElementById('user-input-text')
 const historyContainer = document.getElementById('history')
 const openFileButton = document.getElementById('file-open')
 const openFileErrMsg = document.getElementById('file-open-err-msg')
+
+let responseElem
 
 userInput.addEventListener('keydown', function (event) {
   if (event.key === 'Enter') {
@@ -23,19 +28,30 @@ userInput.addEventListener('keydown', function (event) {
     responseElem = document.createElement('div')
     responseElem.className = 'history-chat-response'
 
+    //* add the element that will display the response
+    responseElem = document.createElement('div')
+    responseElem.className = 'history-chat-response'
+    historyContainer.appendChild(responseElem)
+
+    //* add loading animation
+    const loadingAnimation = document.createElement('div')
+    loadingAnimation.className = 'dots-loading'
+    for (let i = 0; i < 3; i++) {
+      const dot = document.createElement('div')
+      loadingAnimation.appendChild(dot)
+    }
+    responseElem.appendChild(loadingAnimation)
+
     //* Send chat to Ollama server
     window.electronAPI.sendChat(message)
   }
 })
 
-let responseElem
-
 window.electronAPI.onChatReply((event, data) => {
-  //* Check if the responseElem doesn't exist or isn't in the DOM
-  if (!responseElem || !document.body.contains(responseElem)) {
-    responseElem = document.createElement('div')
-    responseElem.className = 'history-chat-response'
-    historyContainer.appendChild(responseElem) // Append to history right away
+  //* clear loading animation
+  const loadingDots = responseElem.querySelector('.dots-loading')
+  if (loadingDots) {
+    loadingDots.remove()
   }
 
   //* Append new content to the persistent responseElem's innerText
@@ -51,7 +67,7 @@ window.electronAPI.onChatReply((event, data) => {
 openFileButton.addEventListener('click', () => {
   openFileErrMsg.innerText = ''
   window.electronAPI.newChat()
-  //* Hide the initial view and show the chat view
+  //* Hide the initial view and show the chat view once loaded
 })
 
 window.electronAPI.onChatLoaded((event, data) => {
