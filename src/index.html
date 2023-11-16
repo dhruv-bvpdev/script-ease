@@ -10,9 +10,13 @@
   </head>
 
   <body>
-    <!-- Initial View -->
+    <!-- Initial Loading View -->
     <div id="initial-view">
       <img id="app-logo" src="../public/logo_1.png" alt="App Logo" />
+    </div>
+
+    <!-- Chat View (Initially Hidden) -->
+    <div id="chat-view">
       <button id="file-open">
         <svg
           width="24"
@@ -49,6 +53,17 @@
       </button>
       <span id="file-open-err-msg"></span>
 
+      <div class="chat">
+        <div id="history"></div>
+        <div class="user-input">
+          <input
+            id="user-input-text"
+            placeholder="Ask a question, then press enter..."
+            autofocus
+          />
+        </div>
+      </div>
+
       <!-- Checkmark and Status Message if Ollama is already installed and running -->
       <div id="status-container">
         <svg
@@ -75,20 +90,6 @@
           />
         </svg>
         <span>ollama is running</span>
-      </div>
-    </div>
-
-    <!-- Chat View (Initially Hidden) -->
-    <div id="chat-view">
-      <div class="chat">
-        <div id="history"></div>
-        <div class="user-input">
-          <input
-            id="user-input-text"
-            placeholder="Ask a question, then press enter..."
-            autofocus
-          />
-        </div>
       </div>
     </div>
   </body>
