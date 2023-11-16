@@ -1,4 +1,3 @@
-/* Reset and Global Styles */
 * {
   padding: 0;
   margin: 0;
@@ -35,7 +34,7 @@ button {
   color: #c8c8c8;
   padding: 8px 16px;
   font-size: 1rem;
-  border-radius: 4px; /* Rounded corners */
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -51,6 +50,10 @@ button:active {
 button:focus {
   outline: none;
   box-shadow: 0 0 0 2px #656565;
+}
+
+#status-msg {
+  padding-top: 5%;
 }
 
 .chat {
@@ -102,7 +105,7 @@ button:focus {
 
 #chat-view::before {
   content: '';
-  position: fixed; /* Fix the position to the top of the viewport */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -112,7 +115,7 @@ button:focus {
     rgba(24, 24, 24, 1),
     rgba(24, 24, 24, 0)
   );
-  z-index: 1000; /* High z-index to ensure it's above other content */
+  z-index: 1000;
   pointer-events: none;
   overflow-y: auto;
 }
@@ -143,7 +146,7 @@ button:focus {
 }
 
 #file-open svg {
-  display: block; /* Ensure the SVG takes up the full width and height of the button */
+  display: block;
 }
 
 #file-open:active svg rect {
@@ -214,5 +217,24 @@ button:focus {
 @keyframes bounce {
   to {
     transform: translateY(-6px);
+  }
+}
+
+#spinner {
+  border: 2px solid #f8f8f8;
+  border-radius: 50%;
+  border-top: 4px solid #181818;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }

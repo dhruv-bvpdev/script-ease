@@ -6,7 +6,8 @@ const {
   sendChat,
   serveOllama,
   stopOllama,
-  loadDocument
+  loadDocument,
+  runOllamaModel
 } = require('./chat.js')
 
 //* Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -42,6 +43,7 @@ app.on('ready', () => {
   ipcMain.on('chat:new', newChat)
   ipcMain.on('doc:load', loadDocument)
   ipcMain.on('ollama:serve', serveOllama)
+  ipcMain.on('ollama:run', runOllamaModel)
   ipcMain.on('ollama:stop', stopOllama)
 
   createWindow()
