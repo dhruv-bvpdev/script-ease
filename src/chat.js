@@ -8,7 +8,7 @@ const {
   ping,
   reloadOllama,
   runOllama
-} = require('./service/ollama.js')
+} = require('./service/ollama/ollama.js')
 const { exec } = require('child_process')
 
 async function sendChat(event, msg) {

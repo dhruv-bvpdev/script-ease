@@ -1,5 +1,9 @@
+const path = require('path')
+const { exec } = require('child_process')
+
 var OllamaRunType = {
-  SYSTEM: 'system'
+  SYSTEM: 'system',
+  PACKAGED: 'packaged'
 }
 
 class Ollama {
@@ -26,34 +30,78 @@ class Ollama {
    */
   async run() {
     try {
-      // see if ollama is already running
+      //* see if ollama is already running
       await this.ping()
       return OllamaRunType.SYSTEM
     } catch (err) {
-      // this is fine, we just need to start ollama
+      //* this is fine, we just need to start ollama
       console.log(err)
     }
     try {
-      // See if 'ollama run' command is available on the system
-      exec('ollama run mistral', (error, stdout, stderr) => {
+      //* See if 'ollama run' command is available on the system
+      return await this.runSystem()
+    } catch (err) {
+      //* ollama is not installed, run the binary directly
+      console.log(`exec ollama: ${err}`)
+    }
+
+    //* start the ollama packaged ollama server
+    try {
+      let exe = ''
+      switch (process.platform) {
+        case 'win32':
+          exe = 'ollama.exe'
+          break
+        case 'darwin':
+          exe = 'ollama-darwin'
+          break
+        case 'linux':
+          exe = 'ollama-linux-' + process.arch
+          break
+        default:
+          throw new Error('Unsupported platform:', process.platform)
+      }
+      const pathToBinary = path.join(__dirname, 'runners', exe)
+      exec(`${pathToBinary} serve`, (error, stdout, stderr) => {
         if (error) {
-          throw new Error(`exec error: ${error}`)
+          console.error(`Error executing ollama-darwin: ${error}`)
+          return
+        }
+        console.log(stdout)
+        if (stderr) {
+          console.warn(`Warnings from ollama-darwin: ${stderr}`)
+        }
+
+        return OllamaRunType.PACKAGED
+      })
+    } catch (err) {
+      throw new Error(`Failed to start ollama server: ${err}`)
+    }
+  }
+
+  //* runs ollama if it is already installed
+  async runSystem() {
+    return new Promise((resolve, reject) => {
+      exec('ollama run llama2', (error, stdout, stderr) => {
+        if (error) {
+          reject(new Error(`exec error: ${error}`))
+          return
         }
 
         if (stderr) {
-          throw new Error(`ollama stderr: ${stderr}`)
+          reject(new Error(`ollama stderr: ${stderr}`))
+          return
         }
 
         console.log(`stdout: ${stdout}`)
         if (stdout.includes('Error')) {
-          throw new Error(`ollama stdout: ${stdout}`)
+          reject(new Error(`ollama stdout: ${stdout}`))
+          return
         }
 
-        return OllamaRunType.SYSTEM
+        resolve(OllamaRunType.SYSTEM)
       })
-    } catch (err) {
-      console.log(`exec ollama: ${err}`)
-    }
+    })
   }
 
   static reload() {
