@@ -183,7 +183,7 @@ button:focus {
   stroke: #c8c8c8;
 }
 
-.button-text {
+#file-button-text {
   padding-top: 2.5px;
 }
 
@@ -239,6 +239,16 @@ button:focus {
   width: 20px;
   height: 20px;
   animation: spin 1s linear infinite;
+}
+
+#file-spinner {
+  border: 2px solid #181818;
+  border-radius: 50%;
+  border-top: 2px solid #656565;
+  width: 10px;
+  height: 10px;
+  animation: spin 1s linear infinite;
+  display: none;
 }
 
 @keyframes spin {

@@ -8,13 +8,7 @@ const {
   clearVectorStore,
   vectorStoreSize
 } = require('./service/vector.js')
-const {
-  run,
-  generate,
-  clearHistory,
-  stop,
-  serve
-} = require('./service/ollama/ollama.js')
+const { run, generate, stop, serve } = require('./service/ollama/ollama.js')
 
 async function runOllamaModel(event, msg) {
   try {
@@ -93,7 +87,7 @@ async function loadDocument(event) {
       chunkOverlap: 50
     })
     const documents = await splitter.splitDocuments([
-      new Document({ pageContent: doc })
+      new Document({ pageContent: doc.content })
     ])
     if (documents.length === 0) {
       return
@@ -106,7 +100,7 @@ async function loadDocument(event) {
     //* store the embeddings
     store(embeddings)
 
-    event.reply('doc:load', { success: true, content: 'success' })
+    event.reply('doc:load', { success: true, content: doc.fileName })
   } catch (err) {
     console.log(err)
     event.reply('doc:load', { success: false, content: err.message })
