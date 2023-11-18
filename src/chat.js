@@ -80,18 +80,6 @@ async function sendChat(event, msg) {
   }
 }
 
-async function newChat(event) {
-  try {
-    //* clear the state from the service
-    clearVectorStore()
-    clearHistory()
-    event.reply('chat:load', { success: true, content: 'success' })
-  } catch (err) {
-    console.log(err)
-    event.reply('chat:load', { success: false, content: err.message })
-  }
-}
-
 async function loadDocument(event) {
   try {
     clearVectorStore()
@@ -139,7 +127,6 @@ function stopOllama(event) {
 }
 
 module.exports = {
-  newChat,
   sendChat,
   loadDocument,
   serveOllama,
