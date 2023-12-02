@@ -13,7 +13,6 @@ const stopRequestBtn = document.getElementById('stop-request-btn')
 const chatView = document.getElementById('chat-view')
 
 let responseElem
-let firstChatResponse = true //* track the first response to scroll to the bottom
 
 /**
  * This is the initial chain of events that must run on start-up.
@@ -70,7 +69,6 @@ window.electronAPI.onDocumentLoaded((event, data) => {
 userInput.addEventListener('keydown', function (event) {
   if (event.key === 'Enter') {
     event.preventDefault()
-    firstChatResponse = true
     statusContainer.style.display = 'none' // once the first chat is sent, hide the initial status message
     stopRequestContainer.style.display = 'flex'
     //* Disable input while processing
@@ -79,6 +77,7 @@ userInput.addEventListener('keydown', function (event) {
 
     const message = userInput.value
     userInput.value = ''
+    userInput.style.height = '' //* reset the height of the input box
 
     //* Create a new text block
     const historyMessage = document.createElement('div')
@@ -106,6 +105,7 @@ userInput.addEventListener('keydown', function (event) {
 
     //* Send chat to Ollama server
     window.electronAPI.sendChat(message)
+    chatView.scrollTop = chatView.scrollHeight
   }
 })
 
@@ -117,13 +117,21 @@ window.electronAPI.onChatReply((event, data) => {
     loadingDots.remove()
   }
 
-  //* Append new content to the persistent responseElem's innerText
-  const resp = data.success ? data.content : 'Error: ' + data.content
-  if (resp.response) {
-    responseElem.innerText += resp.response // Append to existing text
+  if (!data.success) {
+    if (data.content !== 'The operation was aborted.') {
+      responseElem.innerText = 'Error: ' + data.content
+    }
+    stopRequestContainer.style.display = 'none'
+    userInput.disabled = false
+    userInput.focus()
+    return
   }
 
-  if (resp.done) {
+  if (data.content.response) {
+    responseElem.innerText += data.content.response // Append to existing text
+  }
+
+  if (data.content.done) {
     stopRequestContainer.style.display = 'none'
     userInput.disabled = false
     userInput.focus()
@@ -134,9 +142,8 @@ window.electronAPI.onChatReply((event, data) => {
     chatView.scrollTop + chatView.clientHeight >= chatView.scrollHeight - 50 // 10 is a tolerance value
 
   //* If they're at the bottom, scroll to the new bottom
-  if (isAtBottom || firstChatResponse) {
+  if (isAtBottom) {
     chatView.scrollTop = chatView.scrollHeight
-    firstChatResponse = false
   }
 })
 
@@ -153,4 +160,10 @@ stopRequestBtn.addEventListener('click', () => {
   stopRequestContainer.style.display = 'none'
   userInput.disabled = false
   userInput.focus()
+})
+
+//* Auto-resize the input box to fit the text
+userInput.addEventListener('input', function () {
+  this.style.height = 'auto'
+  this.style.height = this.scrollHeight + 'px'
 })
