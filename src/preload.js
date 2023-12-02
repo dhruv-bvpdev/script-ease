@@ -30,5 +30,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('ollama:run', (event, data) => {
       callback(event, data)
     })
-  }
+  },
+  getModel: () => ipcRenderer.send('model:get'),
+  onModelGet: (callback) => {
+    ipcRenderer.on('model:get', (event, data) => {
+      callback(event, data)
+    })
+  },
+  setModel: (model) => ipcRenderer.send('model:set', model)
 })
