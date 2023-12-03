@@ -82,7 +82,6 @@ async function sendChat(event, msg) {
               <user>
                 ${msg}
               </user>`
-    console.log(prompt)
   }
   try {
     await generate(model, prompt, (json) => {
