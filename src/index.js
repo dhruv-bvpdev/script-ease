@@ -34,13 +34,9 @@ const createWindow = () => {
   }
 }
 
-//* This method will be called when Electron has finished
-//* initialization and is ready to create browser windows.
-//* Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   //* Add a handler for the interprocess events. This enables 2-way communication
   //* between the renderer process (UI) and the main process.
-  //* https://www.electronjs.org/docs/latest/tutorial/ipc#pattern-2-renderer-to-main-two-way
   ipcMain.on('model:set', setModel)
   ipcMain.on('model:get', getModel)
   ipcMain.on('chat:send', sendChat)
