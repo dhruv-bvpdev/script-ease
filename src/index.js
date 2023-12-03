@@ -12,6 +12,10 @@ const {
   runOllamaModel
 } = require('./chat.js')
 
+//* When debug is set to true, the app will log debug messages to the console
+//* This will be turned on by default when running the app in non-packaged mode
+global.debug = false
+
 //* Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit()
@@ -30,6 +34,7 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, 'index.html'))
 
   if (!app.isPackaged) {
+    global.debug = true
     mainWindow.webContents.openDevTools()
   }
 }
