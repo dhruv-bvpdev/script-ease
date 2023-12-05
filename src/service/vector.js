@@ -24,10 +24,6 @@ class MemoryVectorStore {
     }
   }
 
-  static clear() {
-    this.memoryVectors = []
-  }
-
   static getMemoryVectorStore() {
     if (this.instance === null) {
       this.instance = new this()
@@ -35,19 +31,15 @@ class MemoryVectorStore {
     return this.instance
   }
 
-  static fromEmbeddings(embeddings) {
-    if (this.instance === null) {
-      this.instance = new this()
-      this.instance.addEmbeddings(embeddings)
-    }
-    return this.instance
-  }
-
   addEmbeddings(embeddings) {
-    const memoryVectors = embeddings.map((item) => {
+    const vectors = embeddings.map((item) => {
       return new MemoryVector(item.document, item.embedding)
     })
-    this.memoryVectors = this.memoryVectors.concat(memoryVectors)
+    this.memoryVectors = this.memoryVectors.concat(vectors)
+  }
+
+  clear() {
+    this.memoryVectors = []
   }
 
   similaritySearchVector(query, k) {
@@ -63,11 +55,12 @@ class MemoryVectorStore {
 }
 
 function clearVectorStore() {
-  return MemoryVectorStore.clear()
+  MemoryVectorStore.getMemoryVectorStore().clear()
 }
 
 async function store(embeddings) {
-  return MemoryVectorStore.fromEmbeddings(embeddings)
+  const store = MemoryVectorStore.getMemoryVectorStore()
+  return store.addEmbeddings(embeddings)
 }
 
 function search(embedding, k) {
